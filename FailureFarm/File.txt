@@ -1,0 +1,4 @@
+#Preview {
+    CalView(date: Date(), sticker: "🍑")
+}
+    CalView(date: <#Date#>, sticker: <#String#>)
