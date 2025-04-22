@@ -1,17 +1,14 @@
 //
-//  PeachToday.swift
+//  Untitled 2.swift
 //  FailureFarm
 //
-//  Created by Libby Bae on 4/17/25.
+//  Created by Libby Bae on 4/16/25.
 //
-
-
-//오늘날짜
 import SwiftUI
 
 struct PeachToday: View {
-    @EnvironmentObject var mistakeManager: MistakeManager
-    @State private var todayMistake: Mistake?
+    var mistake: Mistake
+    @State private var navigateToCalView = false
     
     var body: some View {
         
@@ -19,99 +16,108 @@ struct PeachToday: View {
             Image("bkgr")
                 .resizable()
                 .ignoresSafeArea()
-            VStack {
+            VStack{
                 Spacer()
-                ZStack {
-                    Text("")
-                        .frame(width: 380, height: 130)
-                        .background(Color("리드핑크"))
-                        .cornerRadius(15)
-                    
-                    HStack {
-                        Text("Date")// is an example
-                            .font(.custom("EF_jejudoldam", size: 30))
-                            .frame(width:100, height: 100)
-                            .background(Color("핑크"))
-                            .cornerRadius(15)
-                            .padding(.leading, 30)
-                        Spacer()
-                        Image("비-선택후")// is an example
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 120)
-                            .padding(.leading, 10)
-                        Spacer()
-                        Image("풋복-핑")// is an example
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 110)
-                    }
-                    
-                    Spacer()
-                    
-                }
                 VStack {
-                    if let mistake = todayMistake {
-                        Text("오늘의 실수")
-                            .font(.custom("EF_jejudoldam", size: 20))
-                        
-                        Text(mistake.text)
-                            .font(.custom("EF_jejudoldam", size: 15))
-                            .padding()
+                    ZStack {
+                        Text("")
+                            .frame(width: 390, height: 130)
+                            .background(Color("리드핑크"))
+                            .cornerRadius(15)
+                            .padding(.top,20)
                         
                         HStack {
-                            Text("감정:")
-                            Image(getFeelingImageName(mistake.feeling))
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 50)
+                            Text("Date")// is an example
+                                .font(.custom("EF_jejudoldam", size: 30))
+                                .frame(width:98, height: 98)
+                                .background(Color("핑크"))
+                                .cornerRadius(20)
+                                .padding(.leading, 30)
+                                .padding(.top,18)
+                            Spacer()
+                            if let weather = WeatherType(rawValue: mistake.result) {
+                                Image(weather.afterSelect())
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 120)
+                                    .padding(.leading, 10)
+                                    .padding(.top, 22)
+                            }
                             
-                            Text("결과:")
-                            Image(getResultImageName(mistake.result))
+                            Spacer()
+                            Image("풋복-핑")// is an example
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 50)
+                                .frame(width: 110)
+                                .padding(.trailing,30)
+                                .padding(.top,20)
+                            
                         }
-                    } else {
-                        Text("오늘 저장된 실수가 없습니다.")
-                            .font(.custom("EF_jejudoldam", size: 15))
+                        Spacer()
+                        
+                    }
+                    Text("운전과 관련된 실수를 하였다") //선택항목 텍스트
+                        .font(.custom("EF_jejudoldam", size: 20))
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(3)
+                        .frame(width: 390, height: 100)
+                        .background(Color("리드핑크"))
+                        .cornerRadius(12)
+                        .padding()
+                    
+                    Image("오늘의 복숭아")
+                        .resizable()
+                        .frame(width: 200, height: 60)
+
+                    ZStack {
+                        Text("") //그날의 복숭아 배경
+                            .frame(width: 390, height: 400)
+                            .background(Color("리드핑크"))
+                            .cornerRadius(12)
+                        
+                        VStack {
+                            Text("복숭아품종")
+                                .font(.custom("EF_jejudoldam", size: 25))
+                                .frame(width: 200, height: 60)
+                                .background(Color("핑크"))
+                                .cornerRadius(12)
+                            Text("특징")
+                                .font(.custom("EF_jejudoldam", size: 17))
+                                .frame(width: 350, height: 50)
+                                .background(Color("핑크"))
+                                .cornerRadius(12)
+                                .padding()
+                            Image("서왕모")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 200)
+                                .cornerRadius(12)
+                            
+                            
+                        }
                     }
                     
-                    // 뒤로가기 버튼 등 추가 UI 요소...
-                    
-                    NavigationLink(destination: CalView().navigationBarBackButtonHidden(true)) {
-                        Image("확인")
-                            .resizable()
-                            .frame(width: 261, height: 50)
-                            .padding()
-                    }
+                }
+                NavigationLink(destination: CalView()) {
+                    Image("확인")
+                        .resizable()
+                        .frame(width: 261, height: 50)
+                        .padding()
                 }
             }
-            .onAppear {
-                todayMistake = mistakeManager.getMistakeForDate(Date())
-            }
         }
     }
-    
-    // FruitType 이미지 이름 가져오기
-    func getFeelingImageName(_ feeling: String) -> String {
-        if let fruitType = FruitType(rawValue: feeling) {
-            return fruitType.afterSelect()
-        }
-        return "풋복-핑" // 기본값
     }
-    
-    // WeatherType 이미지 이름 가져오기
-    func getResultImageName(_ result: String) -> String {
-        if let weatherType = WeatherType(rawValue: result) {
-            return weatherType.afterSelect()
-        }
-        return "해-선택후" // 기본값
-    }
-}
+
+
 
 #Preview {
-    NavigationView {
-        PeachToday()
+    NavigationStack {
+        PeachToday(mistake: Mistake(
+            date: Date(),
+            text: "운전과 관련된 실수를 하였다",
+            feeling: "smile",
+            result: "비"
+        ))
     }
 }

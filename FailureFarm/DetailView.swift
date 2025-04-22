@@ -5,125 +5,242 @@
 //  Created by Libby Bae on 4/16/25.
 //
 import SwiftUI
+import Foundation
+
+let isPreviewMode: Bool = ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" // navigation으로 화면 이동시 crash 방지
+
+struct DateFormatterHelper {
+    static func formattedDateWithSuffix(_ date: Date) -> String {
+        let day = Calendar.current.component(.day, from: date)
+        let suffix: String
+        
+        switch day {
+        case 1, 21, 31: suffix = "st"
+        case 2, 22: suffix = "nd"
+        case 3, 23: suffix = "rd"
+        default: suffix = "th"
+        }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM"
+        let month = formatter.string(from: date)
+        
+        return "\(month) \(day)\(suffix)"
+    }
+}
 
 struct DetailView: View {
-    @State private var navigateToCalView = false
+    let date: Date
+    
+    @EnvironmentObject var mistakeManager: MistakeManager
+    
+    var mistake: Mistake? {
+        mistakeManager.mistakes.first { Calendar.current.isDate($0.date, inSameDayAs: date) }
+    } // calview에서 날짜를 누르면 그날 저장한 데이터를 불러온다
+    
+    @State private var goToCalView = false
+    @State private var navigateToWritingView = false
+    //navigation 연결 장치
+    
+    var peachName: String {
+        if let feeling = mistake?.feeling, let fruit = FruitType(rawValue: feeling) {
+            switch fruit {
+            case .smile: return "거반도"
+            case .surprised: return "마도카"
+            case .sweating: return "신비"
+            case .dead: return "개복숭아"
+            }
+        }
+        return "오늘의 복숭아"
+    }
+    
+    var peachDescription: String {
+        if let feeling = mistake?.feeling, let fruit = FruitType(rawValue: feeling) {
+            switch fruit {
+            case .smile: return "단단한 열매는 당도가 높고, 신맛이 적으며, 복숭아 고유의 풍미가 매우 진한 최우수 복숭아 품종이다.재배 시 낙과가 거의 없어 인기가 많다."
+            case .surprised: return "원반 모양의 납작한 형태를 지닌 기이한 형태의 복숭아 품종으로서 당도와 맛이 매우 좋다.  과즙이 많고 무른편이다."
+            case .sweating: return "과육은 단단하며 사각거리는 식감을 준다.  해를 받는 곳에 착색된다. 또한 비료를 일정하게 주지 않으면 당도가 한쪽으로 편중되는 과육의 갈변현상이 발생한다."
+            case .dead: return "친식, 기침, 기관지염 등을 완화하는데 효과적이다. 야생성이 강해 과수로서 재배하고 있는 복숭아보다 병충해에 강하기 때문에 다른 복숭아에 비해 재배가 쉽다."
+            }
+        }
+        return "특징"
+    }
+    
+    var peachImage: Image {
+        if let feeling = mistake?.feeling, let fruit = FruitType(rawValue: feeling) {
+            switch fruit {
+            case .smile: return Image("거반도")
+            case .surprised: return Image("마도카")
+            case .sweating: return Image("신비")
+            case .dead: return Image("개복숭아")
+            }
+        }
+        return Image("오늘의 복숭아")
+    }
     
     var body: some View {
         
-        ZStack{ //상단 아이콘
+        ZStack{
             Image("bkgr")
                 .resizable()
                 .ignoresSafeArea()
             VStack{
                 Spacer()
-                VStack { //선택 항목
-//                    HStack {
-//                        Button(action: {
-//                            // Add your edit action here
-//                            print("Edit tapped")
-//                        }) {
-//                            Image(systemName: "pencil.circle")
-//                                .resizable()
-//                                .frame(width: 30, height: 30)
-//                            
-//                            Button {
-//                                /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/ /*@END_MENU_TOKEN@*/
-//                            } label: {
-//                                Text("trash.circle")
-//                            }
-//                        }
-                        ZStack {
-                            Text("")
-                                .frame(width: 390, height: 130)
-                                .background(Color("리드핑크"))
-                                .cornerRadius(15)
-                                .padding(.top,20)
-                            
-                            HStack {
-                                Text("Date")// is an example
-                                    .font(.custom("EF_jejudoldam", size: 30))
-                                    .frame(width:98, height: 98)
-                                    .background(Color("핑크"))
-                                    .cornerRadius(20)
-                                    .padding(.leading, 30)
-                                    .padding(.top,18)
-                                Spacer()
-                                Image("비-선택후")// is an example
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 120)
-                                    .padding(.leading, 10)
-                                    .padding(.top,22)
-                                
-                                Spacer()
-                                Image("풋복-핑")// is an example
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 110)
-                                    .padding(.trailing,30)
-                                    .padding(.top,20)
-                                
-                            }
-                            Spacer()
-                            
+                DetailLayer( // struct DetailLayer: View { 를 불러옴
+                    date: date,
+                    mistake: mistake,
+                    peachName: peachName,
+                    peachDescription: peachDescription,
+                    peachImage: peachImage
+                )
+                
+                HStack {
+                    Spacer()
+                    
+                    Button {
+                        if let mistake = mistake {
+                            mistakeManager.mistakes.removeAll { $0.id == mistake.id }
+                            goToCalView = true
                         }
-                        Text("운전과 관련된 실수를 하였다") //선택항목 텍스트
-                            .font(.custom("EF_jejudoldam", size: 20))
-                            .minimumScaleFactor(0.5)
-                            .lineLimit(3)
-                            .frame(width: 390, height: 100)
-                            .background(Color("리드핑크"))
-                            .cornerRadius(12)
-                            .padding()
-                        
-                        ZStack {
-                            Text("") //그날의 복숭아 배경
-                                .frame(width: 390, height: 400)
-                                .background(Color("리드핑크"))
-                                .cornerRadius(12)
-                            
-                            VStack {
-                                Text("복숭아품종")
-                                    .font(.custom("EF_jejudoldam", size: 25))
-                                    .frame(width: 200, height: 60)
-                                    .background(Color("핑크"))
-                                    .cornerRadius(12)
-                                Text("특징")
-                                    .font(.custom("EF_jejudoldam", size: 17))
-                                    .frame(width: 350, height: 50)
-                                    .background(Color("핑크"))
-                                    .cornerRadius(12)
-                                    .padding()
-                                Image("서왕모")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 200)
-                                    .cornerRadius(12)
-                                
-                                
-                            }
-                        }
-                        
-                    }
-                    NavigationLink(destination: CalView()) {
-                        Image("확인")
+                    } label: {
+                        Image(systemName: "trash") // preview crash 일어남 고쳐야함
                             .resizable()
-                            .frame(width: 261, height: 50)
-                            .padding()
+                            .frame(width: 30, height: 30)
+                            .padding(.trailing, 30)
                     }
                 }
+                .padding(.top, 5)
                 
+                Spacer()
+                
+                Button {
+                    if !isPreviewMode {
+                        goToCalView = true
+                    }
+                } label: {
+                    Image("확인")
+                        .resizable()
+                        .frame(width: 261, height: 50)
+                        .padding(.bottom, 30)
+                }
+                .navigationDestination(isPresented: $goToCalView) {
+                    CalView()
+                }
+            }
+            
+        }
+    }
+}
+
+struct DetailLayer: View {
+    var date: Date
+    var mistake: Mistake? // 실수 입력 안한 날도 있으므로
+    var peachName: String
+    var peachDescription: String
+    var peachImage: Image
+    
+    var body: some View {
+        VStack {
+            ZStack {
+                Text("")
+                    .frame(width: 360, height: 100)
+                    .background(Color("리드핑크"))
+                    .cornerRadius(15)
+                    .padding(.top,20)
+                
+                HStack {
+                    Text(DateFormatterHelper.formattedDateWithSuffix(date))
+                        .font(.custom("EF_jejudoldam", size: 18))
+                        .frame(width: 75, height: 75)
+                        .background(Color("핑크"))
+                        .cornerRadius(20)
+                        .padding(.leading, 40)
+                        .padding(.top,18)
+                    
+                    Spacer()
+                    
+                    if let mistake, let weather = WeatherType(rawValue: mistake.result) { //옵셔널 바인딩 2번. 실수 있는지 확인--> 해당하는 날씨 있는지 확인
+                        Image(weather.afterSelect())
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 70)
+                            .padding(.leading, 10)
+                            .padding(.top,22)
+                    }
+                    
+                    Spacer()
+                    
+                    if let mistake, let fruit = FruitType(rawValue: mistake.feeling) {
+                        Image(fruit.afterSelect())
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 70)
+                            .padding(.trailing,40)
+                            .padding(.top,20)
+                    }
+                }
+                Spacer()
+            }
+            
+            if let mistake = mistake { //"오늘이런실수도했다히히"
+                Text(mistake.text)
+                    .font(.custom("EF_jejudoldam", size: 20))
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(3)
+                    .frame(width: 360, height: 100)
+                    .background(Color("리드핑크"))
+                    .cornerRadius(12)
+                    .padding()
+            }
+            
+            ZStack {
+                Text("")
+                    .frame(width: 360, height: 400)
+                    .background(Color("리드핑크"))
+                    .cornerRadius(12)
+                
+                VStack {
+                    Text(peachName)
+                        .font(.custom("EF_jejudoldam", size: 25))
+                        .frame(width: 200, height: 60)
+                        .background(Color("핑크"))
+                        .cornerRadius(12)
+                        .padding(.top, 10)
+                    
+                    Text(peachDescription)
+                        .font(.custom("EF_jejudoldam", size: 15))
+                        .frame(width: 350, height: 100)
+                        .cornerRadius(12)
+                        .padding()
+                    
+                    peachImage
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 200)
+                        .cornerRadius(15)
+                        .padding(.bottom, 10)
+                }
             }
         }
-        
     }
-//}
-
-
+}
 
 #Preview {
-    NavigationView {
-        DetailView()
+    let manager = MistakeManager()
+    let exampleDate = Calendar.current.date(from: DateComponents(year: 2025, month: 4, day: 20))!
+    
+    manager.mistakes = [ // writing view 에 있는 데이터를 끌어오고 싶다!!
+
+        Mistake(
+            date: exampleDate,
+            text: "오늘은 이런 실수도 했다 히히",
+            feeling: FruitType.smile.rawValue,
+            result: WeatherType.sunny.rawValue
+        )
+    ]
+    
+    return NavigationStack {
+        DetailView(date: exampleDate)
+            .environmentObject(manager)
     }
 }

@@ -6,21 +6,17 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		2DEE6B542DB3912200C3A5C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2DEE6B532DB3912200C3A5C2 /* Assets.xcassets */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		2D03895E2DB372BF00FA2645 /* FailureFarm.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FailureFarm.xcodeproj; path = FailureFarm/FailureFarm.xcodeproj; sourceTree = SOURCE_ROOT; };
 		2D887BE42DB402DD00CF1AC7 /* FailureFarm.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = FailureFarm.xcodeproj; sourceTree = "<group>"; };
 		2D96A4B52DB392F4002FA443 /* FailureFarm.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = FailureFarm.xcodeproj; sourceTree = "<group>"; };
+		2DB36A662DB4C3A300EA94CA /* FailureFarm.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = FailureFarm.xcodeproj; sourceTree = "<group>"; };
 		2DBBBDB32DACE44100A7131D /* FailureFarm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FailureFarm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DEE6B302DB38F0E00C3A5C2 /* FailureFarm.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = FailureFarm.xcodeproj; sourceTree = "<group>"; };
-		2DEE6B532DB3912200C3A5C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		2D0388E22DAF8CEA00FA2645 /* Exceptions for "FailureFarm" folder in "FailureFarm" target */ = {
+		2DE7BAE92DB4D39100A9BCB0 /* Exceptions for "FailureFarm" folder in "FailureFarm" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -33,7 +29,7 @@
 		2DBBBDB52DACE44100A7131D /* FailureFarm */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				2D0388E22DAF8CEA00FA2645 /* Exceptions for "FailureFarm" folder in "FailureFarm" target */,
+				2DE7BAE92DB4D39100A9BCB0 /* Exceptions for "FailureFarm" folder in "FailureFarm" target */,
 			);
 			path = FailureFarm;
 			sourceTree = "<group>";
@@ -72,11 +68,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		2DB36A6F2DB4C3A300EA94CA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		2DBBBDAA2DACE44100A7131D = {
 			isa = PBXGroup;
 			children = (
 				2DBBBDB52DACE44100A7131D /* FailureFarm */,
-				2DEE6B532DB3912200C3A5C2 /* Assets.xcassets */,
 				2DBBBDB42DACE44100A7131D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -158,6 +160,10 @@
 					ProjectRef = 2D887BE42DB402DD00CF1AC7 /* FailureFarm.xcodeproj */;
 				},
 				{
+					ProductGroup = 2DB36A6F2DB4C3A300EA94CA /* Products */;
+					ProjectRef = 2DB36A662DB4C3A300EA94CA /* FailureFarm.xcodeproj */;
+				},
+				{
 					ProductGroup = 2D0389612DB372BF00FA2645 /* Products */;
 					ProjectRef = 2D03895E2DB372BF00FA2645 /* FailureFarm.xcodeproj */;
 				},
@@ -178,7 +184,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DEE6B542DB3912200C3A5C2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

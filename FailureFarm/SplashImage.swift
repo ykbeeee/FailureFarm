@@ -9,14 +9,29 @@ import SwiftUI
 
 struct SplashImage: View {
     @State private var isActive = false
-
+    
     var body: some View {
         NavigationStack {
+            content
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        withAnimation {
+                            isActive = true
+                        }
+                    }
+                }
+        }
+    }
+    
+    @ViewBuilder
+    var content: some View {
+        if isActive {
+            CalView()
+        } else {
             ZStack {
                 Image("bkgr")
                     .resizable()
                     .ignoresSafeArea()
-
                 
                 VStack {
                     Text("과실수목원")
@@ -26,21 +41,15 @@ struct SplashImage: View {
                         .resizable()
                         .frame(width: 700, height: 500)
                         .padding(.top, 50)
-                        .padding(.leading, 100)
-                        .padding(.trailing, 100)
+                        .padding(.horizontal, 100)
                 }
             }
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    isActive = true
-                }
-            }
-            .navigationDestination(isPresented: $isActive) {
-                CalView()
-            }
-        }
         }
     }
+}
+
 #Preview {
-    SplashImage()
+    let previewManager = MistakeManager()
+    return SplashImage()
+        .environmentObject(previewManager)
 }

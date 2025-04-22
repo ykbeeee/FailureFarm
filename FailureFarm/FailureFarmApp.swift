@@ -13,10 +13,8 @@ struct FailureFarmApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationView {
-                WritingView().navigationBarBackButtonHidden(true)
-            }
-            .environmentObject(mistakeManager)
+            SplashImage()
+                .environmentObject(mistakeManager)
         }
     }
 }
