@@ -6,78 +6,7 @@
 //
 import SwiftUI
 import SwiftData
-// 실수 데이터를 나타내는 구조체
-struct Mistake: Codable, Identifiable {
-    var id = UUID()
-    var date: Date
-    var text: String
-    var feeling: String // FruitType의 rawValue
-    var result: String  // WeatherType의 rawValue
-}
 
-// 데이터 관리를 위한 클래스
-class MistakeManager: ObservableObject {
-    @Published var mistakes: [Mistake] = []
-    private let userDefaultsKey = "savedMistakes"
-    
-    init() {
-        loadMistakes()
-        
-        // 예시 데이터 추가 (2025년 4월 20일)
-        let calendar = Calendar.current
-        let exampleDateComponents = DateComponents(year: 2025, month: 4, day: 20)
-        if let exampleDate = calendar.date(from: exampleDateComponents) {
-            let sample = Mistake(
-                date: exampleDate,
-                text: "분리수거 내놓는 것을 잊었다!",
-                feeling: FruitType.surprised.rawValue,
-                result: WeatherType.rainy.rawValue
-            )
-            // 중복 추가 방지
-            if !mistakes.contains(where: { calendar.isDate($0.date, inSameDayAs: exampleDate) }) {
-                mistakes.append(sample)
-                saveMistakes()
-            }
-        }
-    }
-    
-    func saveMistake(text: String, feeling: FruitType, result: WeatherType) {
-        let newMistake = Mistake(
-            date: Date(),
-            text: text,
-            feeling: feeling.rawValue,
-            result: result.rawValue
-        )
-        
-        mistakes.append(newMistake)
-        saveMistakes()
-    }
-    
-    private func saveMistakes() {
-        if let encoded = try? JSONEncoder().encode(mistakes) {
-            UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
-        }
-    }
-    
-    private func loadMistakes() {
-        if let savedMistakes = UserDefaults.standard.data(forKey: userDefaultsKey),
-           let decodedMistakes = try? JSONDecoder().decode([Mistake].self, from: savedMistakes) {
-            mistakes = decodedMistakes
-        }
-    }
-    
-    func getMistakeForDate(_ date: Date) -> Mistake? {
-        let calendar = Calendar.current
-        return mistakes.first { mistake in
-            calendar.isDate(mistake.date, inSameDayAs: date)
-        }
-    }
-    
-    func getAllMistakes() -> [Mistake] {
-        return mistakes
-    }
-    
-}
 
 struct WritingView: View {
     
@@ -151,7 +80,8 @@ struct WritingView: View {
                         .frame(width: 360, height: 150)
                         .font(.custom("EF_jejudoldam", size: 15))
                         .cornerRadius(15)
-                    
+            
+
                     HStack {
                         Image("실수 후 기분")
                             .resizable()
@@ -199,14 +129,17 @@ struct WritingView: View {
                     .padding(.top, 5)
 
                     
-                    NavigationLink(destination: {
+                    NavigationLink(destination: { // 실수 데이터를 넘겨줌
                         let mistake = Mistake(
                             date: Date(),
                             text: mistakeText,
                             feeling: selectedFruit.rawValue,
                             result: selectedWeather?.rawValue ?? ""
                         )
-                        PeachToday(mistake: mistake)
+                        return PeachToday(mistake: mistake)
+                            .onAppear {
+                                mistakeManager.saveMistake(text: mistake.text, feeling: selectedFruit, result: selectedWeather ?? .sunny)
+                            }
                             .navigationBarBackButtonHidden(true)
                     }) {
                         Image("저장")
@@ -224,18 +157,8 @@ struct WritingView: View {
     
   
 #Preview {
-    let previewManager = MistakeManager()
-    previewManager.mistakes.append(
-        Mistake(
-            date: Date(),
-            text: "예시 실수입니다!",
-            feeling: FruitType.smile.rawValue,
-            result: WeatherType.sunny.rawValue
-        )
-    )
-
-    return NavigationView {
+    NavigationStack {
         WritingView()
-            .environmentObject(previewManager)
+            .environmentObject(MistakeManager.exampleOnly())
     }
 }

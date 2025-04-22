@@ -56,7 +56,7 @@ struct Setting: View {
             }
             .padding(.bottom, 50)
             
-            NavigationLink(destination: CalView().navigationBarBackButtonHidden(true)) {
+            NavigationLink(destination: CalView().navigationBarBackButtonHidden(true)) { // 누르면 에러남 고쳐야함
                 Image("확인")
                     .resizable()
                     .frame(width: 200, height: 40)

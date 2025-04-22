@@ -21,46 +21,47 @@ struct PeachToday: View {
                 VStack {
                     ZStack {
                         Text("")
-                            .frame(width: 390, height: 130)
+                            .frame(width: 360, height: 100)
                             .background(Color("리드핑크"))
                             .cornerRadius(15)
-                            .padding(.top,20)
+                            .padding(.top,40)
                         
                         HStack {
-                            Text("Date")// is an example
-                                .font(.custom("EF_jejudoldam", size: 30))
-                                .frame(width:98, height: 98)
+                            Text(mistake.date.formatted(.dateTime.month().day()))
+                                .font(.custom("EF_jejudoldam", size: 16)) // 날짜를 가져옴
+                                .frame(width:70, height: 70)
                                 .background(Color("핑크"))
                                 .cornerRadius(20)
-                                .padding(.leading, 30)
-                                .padding(.top,18)
+                                .padding(.leading, 50)
+                                .padding(.top,40)
                             Spacer()
                             if let weather = WeatherType(rawValue: mistake.result) {
-                                Image(weather.afterSelect())
+                                Image(weather.afterSelect()) // writing view에서 선택한 날씨 중 하나
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 120)
+                                    .frame(width: 70)
                                     .padding(.leading, 10)
-                                    .padding(.top, 22)
+                                    .padding(.top, 35)
                             }
                             
                             Spacer()
-                            Image("풋복-핑")// is an example
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 110)
-                                .padding(.trailing,30)
-                                .padding(.top,20)
-                            
+                            if let fruit = FruitType(rawValue: mistake.feeling) {
+                                Image(fruit.afterSelect()) // writing view에서 선택한 복숭아 중 하나
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 70)
+                                    .padding(.trailing,50)
+                                    .padding(.top,40)
+                            }
                         }
                         Spacer()
                         
                     }
-                    Text("운전과 관련된 실수를 하였다") //선택항목 텍스트
+                    Text(mistake.text) //선택항목 텍스트
                         .font(.custom("EF_jejudoldam", size: 20))
                         .minimumScaleFactor(0.5)
                         .lineLimit(3)
-                        .frame(width: 390, height: 100)
+                        .frame(width: 360, height: 100)
                         .background(Color("리드핑크"))
                         .cornerRadius(12)
                         .padding()
@@ -71,23 +72,23 @@ struct PeachToday: View {
 
                     ZStack {
                         Text("") //그날의 복숭아 배경
-                            .frame(width: 390, height: 400)
+                            .frame(width: 360, height: 400)
                             .background(Color("리드핑크"))
                             .cornerRadius(12)
                         
                         VStack {
-                            Text("복숭아품종")
+                            Text(mistake.peachName)
                                 .font(.custom("EF_jejudoldam", size: 25))
                                 .frame(width: 200, height: 60)
                                 .background(Color("핑크"))
                                 .cornerRadius(12)
-                            Text("특징")
+                            Text(mistake.peachDescription)
                                 .font(.custom("EF_jejudoldam", size: 17))
-                                .frame(width: 350, height: 50)
+                                .frame(width: 350, height: 80)
                                 .background(Color("핑크"))
                                 .cornerRadius(12)
                                 .padding()
-                            Image("서왕모")
+                            mistake.peachImage
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 200)
@@ -102,7 +103,7 @@ struct PeachToday: View {
                     Image("확인")
                         .resizable()
                         .frame(width: 261, height: 50)
-                        .padding()
+                        .padding(.bottom, 30)
                 }
             }
         }
@@ -111,13 +112,3 @@ struct PeachToday: View {
 
 
 
-#Preview {
-    NavigationStack {
-        PeachToday(mistake: Mistake(
-            date: Date(),
-            text: "운전과 관련된 실수를 하였다",
-            feeling: "smile",
-            result: "비"
-        ))
-    }
-}

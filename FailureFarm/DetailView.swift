@@ -42,42 +42,6 @@ struct DetailView: View {
     @State private var navigateToWritingView = false
     //navigation 연결 장치
     
-    var peachName: String {
-        if let feeling = mistake?.feeling, let fruit = FruitType(rawValue: feeling) {
-            switch fruit {
-            case .smile: return "거반도"
-            case .surprised: return "마도카"
-            case .sweating: return "신비"
-            case .dead: return "개복숭아"
-            }
-        }
-        return "오늘의 복숭아"
-    }
-    
-    var peachDescription: String {
-        if let feeling = mistake?.feeling, let fruit = FruitType(rawValue: feeling) {
-            switch fruit {
-            case .smile: return "단단한 열매는 당도가 높고, 신맛이 적으며, 복숭아 고유의 풍미가 매우 진한 최우수 복숭아 품종이다.재배 시 낙과가 거의 없어 인기가 많다."
-            case .surprised: return "원반 모양의 납작한 형태를 지닌 기이한 형태의 복숭아 품종으로서 당도와 맛이 매우 좋다.  과즙이 많고 무른편이다."
-            case .sweating: return "과육은 단단하며 사각거리는 식감을 준다.  해를 받는 곳에 착색된다. 또한 비료를 일정하게 주지 않으면 당도가 한쪽으로 편중되는 과육의 갈변현상이 발생한다."
-            case .dead: return "친식, 기침, 기관지염 등을 완화하는데 효과적이다. 야생성이 강해 과수로서 재배하고 있는 복숭아보다 병충해에 강하기 때문에 다른 복숭아에 비해 재배가 쉽다."
-            }
-        }
-        return "특징"
-    }
-    
-    var peachImage: Image {
-        if let feeling = mistake?.feeling, let fruit = FruitType(rawValue: feeling) {
-            switch fruit {
-            case .smile: return Image("거반도")
-            case .surprised: return Image("마도카")
-            case .sweating: return Image("신비")
-            case .dead: return Image("개복숭아")
-            }
-        }
-        return Image("오늘의 복숭아")
-    }
-    
     var body: some View {
         
         ZStack{
@@ -88,10 +52,7 @@ struct DetailView: View {
                 Spacer()
                 DetailLayer( // struct DetailLayer: View { 를 불러옴
                     date: date,
-                    mistake: mistake,
-                    peachName: peachName,
-                    peachDescription: peachDescription,
-                    peachImage: peachImage
+                    mistake: mistake
                 )
                 
                 HStack {
@@ -135,9 +96,6 @@ struct DetailView: View {
 struct DetailLayer: View {
     var date: Date
     var mistake: Mistake? // 실수 입력 안한 날도 있으므로
-    var peachName: String
-    var peachDescription: String
-    var peachImage: Image
     
     var body: some View {
         VStack {
@@ -182,7 +140,7 @@ struct DetailLayer: View {
                 Spacer()
             }
             
-            if let mistake = mistake { //"오늘이런실수도했다히히"
+            if let mistake = mistake {
                 Text(mistake.text)
                     .font(.custom("EF_jejudoldam", size: 20))
                     .minimumScaleFactor(0.5)
@@ -200,20 +158,20 @@ struct DetailLayer: View {
                     .cornerRadius(12)
                 
                 VStack {
-                    Text(peachName)
+                    Text(mistake?.peachName ?? "")
                         .font(.custom("EF_jejudoldam", size: 25))
                         .frame(width: 200, height: 60)
                         .background(Color("핑크"))
                         .cornerRadius(12)
                         .padding(.top, 10)
                     
-                    Text(peachDescription)
+                    Text(mistake?.peachDescription ?? "")
                         .font(.custom("EF_jejudoldam", size: 15))
                         .frame(width: 350, height: 100)
                         .cornerRadius(12)
                         .padding()
                     
-                    peachImage
+                    (mistake?.peachImage ?? Image("오늘의 복숭아"))
                         .resizable()
                         .scaledToFit()
                         .frame(width: 200)
@@ -226,21 +184,9 @@ struct DetailLayer: View {
 }
 
 #Preview {
-    let manager = MistakeManager()
     let exampleDate = Calendar.current.date(from: DateComponents(year: 2025, month: 4, day: 20))!
-    
-    manager.mistakes = [ // writing view 에 있는 데이터를 끌어오고 싶다!!
-
-        Mistake(
-            date: exampleDate,
-            text: "오늘은 이런 실수도 했다 히히",
-            feeling: FruitType.smile.rawValue,
-            result: WeatherType.sunny.rawValue
-        )
-    ]
-    
-    return NavigationStack {
+    NavigationStack {
         DetailView(date: exampleDate)
-            .environmentObject(manager)
+            .environmentObject(MistakeManager.exampleOnly())
     }
 }

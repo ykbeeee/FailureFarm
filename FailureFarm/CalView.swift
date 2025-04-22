@@ -7,11 +7,12 @@
 
 import SwiftUI
 
+
 struct CalView: View {
     @EnvironmentObject var mistakeManager: MistakeManager  // 전체 실수 관리
     @State private var currentDate = Date()  // 보여주고 있는 달력의 기준 날짜
     @State private var selectedDate: Date? = nil  // 유저가 탭한 날짜
-
+    
     private var calendar: Calendar {  // 그래고리안 달력
         Calendar(identifier: .gregorian)
     }
@@ -55,7 +56,7 @@ struct CalView: View {
                     }
 
                     HStack {
-                        Button(action: {  //
+                        Button(action: {  // 월 변경 기능 (좌우 화살표)
                             if let newDate = calendar.date(
                                 byAdding: .month,
                                 value: -1,
@@ -88,6 +89,7 @@ struct CalView: View {
                         .padding(.trailing, 10)
                     }
                     .padding(.horizontal)
+                    .padding(.bottom, 5)
 
                     HStack {  // 요일표시
                         ForEach(
@@ -103,7 +105,7 @@ struct CalView: View {
 
                     let totalDays =
                         currentDate.daysInMonth(using: calendar)
-                        + currentDate.firstWeekday(using: calendar) - 1
+                        + currentDate.firstWeekday(using: calendar) - 1 // 이번 달이 몇일까지 있는지 계산 + 현재 월의 1일이 무슨 요일에 시작하는 지 계산 .시작 요일 맞추기 위해 앞에 몇 칸 띄워야 하는 지
                     let columns = Array(
                         repeating: GridItem(.flexible()),
                         count: 7
@@ -118,40 +120,21 @@ struct CalView: View {
                                 ) - 1 {
                                     Color.clear.frame(height: 60)
                                 } else {
-                                    let day = index - currentDate.firstWeekday(using: calendar) + 2  // 뭔지 알아내야함
+                                    let day = currentDate.dayNumber(for: index, using: calendar)  // 이번 달 달력에서 index 위치가 가리키는 날짜 숫자를 계산. 비워야 하는 요일 칸을 제외하고 day 1부터 시작되도록 맞춰준다.
                                     VStack(spacing: 5) {
 
-                                        if let cellDate = currentDate.cellDate(forDay: day, using: calendar),
-                                            mistakeManager.mistakes.contains(where: { $0.date == cellDate }) { NavigationLink(destination: {
-                                                DetailView(date: Date())
-
-                                            }) {
-                                                Image("거반도")  // 4/20일 데이터와 연결 필요
+                                        if let cellDate = currentDate.cellDate(forDay: day, using: calendar), // 실제 객체(cellDate) 만들어줌
+                                           let mistake = mistakeManager.mistakes.first(where: { calendar.isDate($0.date, inSameDayAs: cellDate) }), // mistakeManager 안에 있는 실수 목록 중 해당 cellDate에 작성된 실수가 있는 지 확인
+                                           let fruit = FruitType(rawValue: mistake.feeling) {
+                                            // 복숭아 감정을 FruitType enum으로 변환
+                                            NavigationLink(destination: DetailView(date: cellDate)) {
+                                                Image(fruit.PeachTypes())
                                                     .resizable()
-                                                    .frame(
-                                                        width: 40,
-                                                        height: 40
-                                                    )
+                                                    .frame(width: 40, height: 40)
                                                     .cornerRadius(12)
                                             }
-
-                                            //                                            NavigationLink(destination: DetailView(date: <#T##Date#>, mistakeManager: <#T##MistakeManager#>, goToCalView: <#T##arg#>, navigateToWritingView: <#T##arg#>)
-                                            //                                                .navigationBarBackButtonHidden(.true)
-                                            //                                                           ,label: {
-                                            //                                            Image("거반도") // 4/20일 데이터와 연결 필요
-                                            //                                                .resizable()
-                                            //                                                .frame(width: 40, height: 40)
-                                            //                                                .cornerRadius(12)
-                                            //                                                .onTapGesture {
-                                            //                                                    print("내가누름")
-                                            //                                                }
-                                            //                                                                                            })
-                                            //
                                         } else {
-                                            Color.clear.frame(
-                                                width: 40,
-                                                height: 40
-                                            )
+                                            Color.clear.frame(width: 40, height: 40)
                                         }
 
                                         Text("\(day)")
@@ -163,17 +146,10 @@ struct CalView: View {
                                     .clipShape(
                                         RoundedRectangle(cornerRadius: 10)
                                     )
-                                    //                                    .onTapGesture {
-                                    //                                        var components = calendar.dateComponents([.year, .month], from: currentDate)
-                                    //                                        components.day = day
-                                    //                                        if let date = calendar.date(from: components),
-                                    //                                          mistakeManager.mistakes.contains(where: { Calendar.current.isDate($0.date, inSameDayAs: date) }) {
-                                    //                                            selectedDate = date
-                                    //                                        }
-                                    //                                    }
                                 }
                             }
                         }
+                        .padding(.bottom, 80)
                     }
 
                     //                    if let selectedDate {
@@ -236,5 +212,9 @@ extension Date {
         var components = calendar.dateComponents([.year, .month], from: self)
         components.day = day
         return calendar.date(from: components)
+    }
+    
+    func dayNumber(for index: Int, using calendar: Calendar) -> Int {
+        return index - self.firstWeekday(using: calendar) + 2
     }
 }
