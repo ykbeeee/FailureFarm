@@ -143,7 +143,7 @@ struct DetailLayer: View {
             
             if let mistake = mistake {
                 Text(mistake.text)
-                    .font(.custom("Rix X ladywatermelon OTF", size: 20))
+                    .font(.custom("EF_jejudoldam", size: 20))
                     .minimumScaleFactor(0.5)
                     .lineLimit(3)
                     .frame(width: 360, height: 100)
@@ -171,6 +171,9 @@ struct DetailLayer: View {
                         .frame(width: 350, height: 100)
                         .clipShape(.rect(cornerRadius: 15))
                         .padding()
+//                        .padding(.leading, 30)
+//                        .padding(.trailing, 30)
+
                     
                     (mistake?.peachImage ?? Image("오늘의 복숭아"))
                         .resizable()

@@ -19,14 +19,21 @@ struct WritingView: View {
     @State private var isEditing: Bool = false
     @State private var showAlert = false
     @State private var todayString: String = "" // 오늘 날짜를 불러옴
- 
+    @FocusState private var isTextEditorFocused: Bool
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 Image("bkgr")
                     .resizable()
                     .ignoresSafeArea()
-                
+
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        isTextEditorFocused = false
+                    }
+
                 VStack {
                     ZStack {
                         Text("")
@@ -79,17 +86,21 @@ struct WritingView: View {
                     }
                     TextEditor(text: $mistakeText) // MARK: 유저가 실수 작성
                         .padding()
+                        .focused($isTextEditorFocused)
                         .frame(width: 360, height: 150)
                         .background(.white)
-                        .font(.custom("RixXladywaterme lonOTF", size: 15))
+                        .font(.custom("EF_jejudoldam", size: 15))
                         .clipShape(.rect(cornerRadius: 15))
                         .padding(.horizontal, 16)
                         .scrollContentBackground(.hidden)
                         .overlay(alignment: .topLeading) { // placeholder 구현
                             if mistakeText.isEmpty {
                                 Text("오늘의 실수를 입력해주세요.")
+                                    .font(.custom("EF_jejudoldam", size: 15))
+                                    .foregroundColor(.gray)
                                     .padding(.top, 22) // 내부 위치 조정
                                     .padding(.leading, 35)
+                                    .focused($isTextEditorFocused)
                             }
                         }
             
