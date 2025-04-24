@@ -50,6 +50,8 @@ struct CalView: View {
                                 .navigationBarBackButtonHidden(true)
                         ) {
                             Image(systemName: "gear")
+                                .resizable()
+                                .frame(width: 30, height: 30)
                                 .padding(.trailing, 20)
                                 .padding(.bottom, 20)
                         }
@@ -88,7 +90,7 @@ struct CalView: View {
                         }
                         .padding(.trailing, 10)
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 15)
                     .padding(.bottom, 5)
 
                     HStack {  // 요일표시
@@ -102,6 +104,7 @@ struct CalView: View {
                                 .foregroundColor(.black)
                         }
                     }
+                    .padding(.horizontal, 15)
 
                     let totalDays =
                         currentDate.daysInMonth(using: calendar)
@@ -128,10 +131,11 @@ struct CalView: View {
                                            let fruit = FruitType(rawValue: mistake.feeling) {
                                             // 복숭아 감정을 FruitType enum으로 변환
                                             NavigationLink(destination: DetailView(date: cellDate)) {
-                                                Image(fruit.PeachTypes())
+                                                Image(fruit.PeachTypes()) 
                                                     .resizable()
                                                     .frame(width: 40, height: 40)
-                                                    .cornerRadius(12)
+                                                    .clipShape(.rect(cornerRadius: 12))
+                                
                                             }
                                         } else {
                                             Color.clear.frame(width: 40, height: 40)
@@ -150,6 +154,7 @@ struct CalView: View {
                             }
                         }
                         .padding(.bottom, 80)
+                        .padding(.horizontal, 15)
                     }
 
                     //                    if let selectedDate {

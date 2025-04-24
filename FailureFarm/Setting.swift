@@ -4,7 +4,8 @@ struct Setting: View {
     @State private var selectedDates: Set<DateComponents> = []
     @State private var isPushEnabled: Bool = true
     @State private var navigateToCalView = false
-
+    @Environment(\.dismiss) var dismiss // 이전 뷰로 돌아감
+    
     var body: some View {
         ZStack {
             Image("bkgr")
@@ -55,13 +56,19 @@ struct Setting: View {
                 Spacer()
             }
             .padding(.bottom, 50)
-            
-            NavigationLink(destination: CalView().navigationBarBackButtonHidden(true)) { // 누르면 에러남 고쳐야함
+            Button(action: { dismiss() }) { // 확인을 누르면 이전 뷰인 calview로 돌아감 
                 Image("확인")
                     .resizable()
                     .frame(width: 200, height: 40)
                     .padding()
             }
+            
+//            NavigationLink(destination: CalView().navigationBarBackButtonHidden(true)) { // 누르면 에러남 고쳐야함
+//                Image("확인")
+//                    .resizable()
+//                    .frame(width: 200, height: 40)
+//                    .padding()
+//            }
         }
     }
 }

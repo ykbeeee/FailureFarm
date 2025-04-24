@@ -5,9 +5,9 @@
 //  Created by Libby Bae on 4/21/25.
 //
 
-import Foundation
+import Foundation // JSON 처리를 위함
 
-enum FruitType: String, CaseIterable, Identifiable {
+enum FruitType: String, CaseIterable, Identifiable { // 실수의 결과를 표현하는 enum
     case smile = "smile"
     case surprised = "surprised"
     case sweating = "sweating"
@@ -96,45 +96,44 @@ class MistakeManager: ObservableObject {
         loadMistakes()
     }
     
-    func saveMistake(text: String, feeling: FruitType, result: WeatherType) {
+    func saveMistake(text: String, feeling: FruitType, result: WeatherType) { // 새로운 실수가 만들어지면 mistake 배열에 추가 후 저장
         let newMistake = Mistake(
             date: Date(),
             text: text,
             feeling: feeling.rawValue,
             result: result.rawValue
         )
-        
         mistakes.append(newMistake)
         saveMistakes()
     }
     
-    private func saveMistakes() {
+    private func saveMistakes() { //MARK: [Mistake] 타입, Mistake 객체들의 배열 저장(encode)
         if let encoded = try? JSONEncoder().encode(mistakes) {
-            UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
+            UserDefaults.standard.set(encoded, forKey: userDefaultsKey)  //UserDefault에 저장
         }
     }
     
-    private func loadMistakes() {
+    private func loadMistakes() { // 앱 실행시 UserDefaults에 저장된 데이터를 불러옴
         if let savedMistakes = UserDefaults.standard.data(forKey: userDefaultsKey),
            let decodedMistakes = try? JSONDecoder().decode([Mistake].self, from: savedMistakes) {
             mistakes = decodedMistakes
-        }
+        } // UserDefaults 에서 저장된 Data를 꺼내서 다시 [Mistake] 구조체 배열로 복원(decode)
     }
     
-    func getMistakeForDate(_ date: Date) -> Mistake? {
+    func getMistakeForDate(_ date: Date) -> Mistake? { // 특정 날짜에 대한 실수 찾기
         let calendar = Calendar.current
         return mistakes.first { mistake in
             calendar.isDate(mistake.date, inSameDayAs: date)
         }
     }
     
-    func getAllMistakes() -> [Mistake] {
+    func getAllMistakes() -> [Mistake] { // 전체 실수 반환
         return mistakes
     }
     
 }
 
-extension MistakeManager {
+extension MistakeManager { //뷰에서 사용할 수 있도록 기능 확장
     static func exampleOnly() -> MistakeManager {
         let manager = MistakeManager()
         let calendar = Calendar.current
@@ -158,8 +157,8 @@ extension Mistake {
         guard let fruit = FruitType(rawValue: feeling) else { return "오늘의 복숭아" }
         switch fruit {
         case .smile: return "거반도"
-        case .surprised: return "마도카"
-        case .sweating: return "신비"
+        case .surprised: return "신비"
+        case .sweating: return "마도카"
         case .dead: return "개복숭아"
         }
     }
@@ -168,11 +167,11 @@ extension Mistake {
         guard let fruit = FruitType(rawValue: feeling) else { return "특징" }
         switch fruit {
         case .smile:
-            return "단단한 열매는 당도가 높고, 신맛이 적으며, 복숭아 고유의 풍미가 매우 진한 최우수 복숭아 품종이다. 재배 시 낙과가 거의 없어 인기가 많다."
+            return "원반 모양의 납작한 형태를 지닌 독특한 형태의 복숭아 품종으로서 당도와 맛이 매우 좋다. 과즙이 많고 무른편이다."
         case .surprised:
-            return "원반 모양의 납작한 형태를 지닌 기이한 복숭아로, 당도와 맛이 좋다. 과즙이 많고 무른 편이다."
+            return "당도가 높고 신맛이 적으며 복숭아 고유의 풍미가 매우 진한 최우수 복숭아 품종이다. 재배 시 낙과가 거의 없어 인기가 많다."
         case .sweating:
-            return "과육은 단단하며 사각거리는 식감을 준다. 해를 받는 쪽에 착색되며, 비료가 고르지 않으면 당도 편차가 생긴다."
+            return "과육은 단단하며 사각거리는 식감을 준다. 하지만, 비료를 일정하게 주지 않으면 당도가 한쪽으로 편중되는 과육의 갈변현상이 발생한다."
         case .dead:
             return "친식, 기침, 기관지염 등에 효과가 있다. 병충해에 강하고 재배가 쉬운 야생성 복숭아다."
         }
@@ -182,8 +181,8 @@ extension Mistake {
         guard let fruit = FruitType(rawValue: feeling) else { return Image("오늘의 복숭아") }
         switch fruit {
         case .smile: return Image("거반도")
-        case .surprised: return Image("마도카")
-        case .sweating: return Image("신비")
+        case .surprised: return Image("신비")
+        case .sweating: return Image("마도카")
         case .dead: return Image("개복숭아")
         }
     }
@@ -191,11 +190,11 @@ extension Mistake {
 
 extension FruitType {
     /// 복숭아 품종 (달력용)
-    func PeachTypes() -> String {
+    func PeachTypes() -> String { //FruitType 감정 값에 따라 연결된 복숭아 품종 이름 반환
         switch self {
         case .smile: return "거반도"
-        case .surprised: return "마도카"
-        case .sweating: return "신비"
+        case .surprised: return "신비"
+        case .sweating: return "마도카"
         case .dead: return "개복숭아"
         }
     }

@@ -23,7 +23,7 @@ struct PeachToday: View {
                         Text("")
                             .frame(width: 360, height: 100)
                             .background(Color("리드핑크"))
-                            .cornerRadius(15)
+                            .clipShape(.rect(cornerRadius: 15))
                             .padding(.top,40)
                         
                         HStack {
@@ -31,7 +31,7 @@ struct PeachToday: View {
                                 .font(.custom("EF_jejudoldam", size: 16)) // 날짜를 가져옴
                                 .frame(width:70, height: 70)
                                 .background(Color("핑크"))
-                                .cornerRadius(20)
+                                .clipShape(.rect(cornerRadius: 15))
                                 .padding(.leading, 50)
                                 .padding(.top,40)
                             Spacer()
@@ -63,7 +63,7 @@ struct PeachToday: View {
                         .lineLimit(3)
                         .frame(width: 360, height: 100)
                         .background(Color("리드핑크"))
-                        .cornerRadius(12)
+                        .clipShape(.rect(cornerRadius: 15))
                         .padding()
                     
                     Image("오늘의 복숭아")
@@ -74,26 +74,24 @@ struct PeachToday: View {
                         Text("") //그날의 복숭아 배경
                             .frame(width: 360, height: 400)
                             .background(Color("리드핑크"))
-                            .cornerRadius(12)
-                        
+                            .clipShape(.rect(cornerRadius: 15))
                         VStack {
                             Text(mistake.peachName)
                                 .font(.custom("EF_jejudoldam", size: 25))
                                 .frame(width: 200, height: 60)
                                 .background(Color("핑크"))
-                                .cornerRadius(12)
+                                .clipShape(.rect(cornerRadius: 15))
                             Text(mistake.peachDescription)
                                 .font(.custom("EF_jejudoldam", size: 17))
                                 .frame(width: 350, height: 80)
                                 .background(Color("핑크"))
-                                .cornerRadius(12)
+                                .clipShape(.rect(cornerRadius: 15))
                                 .padding()
                             mistake.peachImage
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 200)
-                                .cornerRadius(12)
-                            
+                                .clipShape(.rect(cornerRadius: 15))
                             
                         }
                     }
@@ -109,6 +107,3 @@ struct PeachToday: View {
         }
     }
     }
-
-
-

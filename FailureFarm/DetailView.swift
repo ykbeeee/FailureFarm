@@ -50,11 +50,6 @@ struct DetailView: View {
                 .ignoresSafeArea()
             VStack{
                 Spacer()
-                DetailLayer( // struct DetailLayer: View { 를 불러옴
-                    date: date,
-                    mistake: mistake
-                )
-                
                 HStack {
                     Spacer()
                     
@@ -68,9 +63,14 @@ struct DetailView: View {
                             .resizable()
                             .frame(width: 30, height: 30)
                             .padding(.trailing, 30)
+                    
                     }
                 }
-                .padding(.top, 5)
+                Spacer()
+                DetailLayer( // struct DetailLayer: View { 를 불러옴
+                    date: date,
+                    mistake: mistake
+                )
                 
                 Spacer()
                 
@@ -109,11 +109,12 @@ struct DetailLayer: View {
                 HStack {
                     Text(DateFormatterHelper.formattedDateWithSuffix(date))
                         .font(.custom("EF_jejudoldam", size: 18))
-                        .frame(width: 75, height: 75)
+                        .frame(width: 63, height: 63)
                         .background(Color("핑크"))
-                        .cornerRadius(20)
+                        .cornerRadius(15)
                         .padding(.leading, 40)
                         .padding(.top,18)
+                        .shadow(radius: 3, x: 0, y: 3)
                     
                     Spacer()
                     
@@ -142,12 +143,12 @@ struct DetailLayer: View {
             
             if let mistake = mistake {
                 Text(mistake.text)
-                    .font(.custom("EF_jejudoldam", size: 20))
+                    .font(.custom("Rix X ladywatermelon OTF", size: 20))
                     .minimumScaleFactor(0.5)
                     .lineLimit(3)
                     .frame(width: 360, height: 100)
                     .background(Color("리드핑크"))
-                    .cornerRadius(12)
+                    .clipShape(.rect(cornerRadius: 12))
                     .padding()
             }
             
@@ -155,27 +156,27 @@ struct DetailLayer: View {
                 Text("")
                     .frame(width: 360, height: 400)
                     .background(Color("리드핑크"))
-                    .cornerRadius(12)
+                    .clipShape(.rect(cornerRadius: 15))
                 
                 VStack {
                     Text(mistake?.peachName ?? "")
                         .font(.custom("EF_jejudoldam", size: 25))
                         .frame(width: 200, height: 60)
                         .background(Color("핑크"))
-                        .cornerRadius(12)
+                        .clipShape(.rect(cornerRadius: 15))
                         .padding(.top, 10)
                     
                     Text(mistake?.peachDescription ?? "")
                         .font(.custom("EF_jejudoldam", size: 15))
                         .frame(width: 350, height: 100)
-                        .cornerRadius(12)
+                        .clipShape(.rect(cornerRadius: 15))
                         .padding()
                     
                     (mistake?.peachImage ?? Image("오늘의 복숭아"))
                         .resizable()
                         .scaledToFit()
                         .frame(width: 200)
-                        .cornerRadius(15)
+                        .clipShape(.rect(cornerRadius: 15))
                         .padding(.bottom, 10)
                 }
             }

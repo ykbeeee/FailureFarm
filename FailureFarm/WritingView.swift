@@ -14,11 +14,11 @@ struct WritingView: View {
     @State private var mistakeResult: String?
     @State private var selectedFruit: FruitType = .smile
     @State private var selectedWeather: WeatherType? = nil
-    @State private var mistakeText: String = "여기에 입력해주세요."
+    @State private var mistakeText: String = ""
     @State private var navigateToPeachToday = false
     @State private var isEditing: Bool = false
     @State private var showAlert = false
-    @State private var todayString: String = ""
+    @State private var todayString: String = "" // 오늘 날짜를 불러옴
  
     var body: some View {
         NavigationStack {
@@ -32,21 +32,22 @@ struct WritingView: View {
                         Text("")
                             .frame(width: 360, height: 100)
                             .background(Color("리드핑크"))
-                            .cornerRadius(15)
+                            .clipShape(.rect(cornerRadius: 15))
+
                         HStack {
-                            Text(todayString)
+                            Text(todayString) // MARK: 오늘 날짜 보여줌
                                 .frame(width: 75, height: 75)
                                 .font(.custom("EF_jejudoldam", size: 16))
                                 .background(Color("핑크"))
-                                .cornerRadius(15)
                                 .padding(.leading,40)
+                                .clipShape(.rect(cornerRadius: 15))
 
                             
                             Spacer()
 
                             Text("오늘 어떤 실수를 했나요?")
-                                .font(.custom("EF_jejudoldam", size: 18))
-                                .padding(.trailing, 70)
+                                .font(.custom("EF_jejudoldam", size: 21))
+                                .padding(.trailing, 37)
 
                             
                                 .onAppear {
@@ -76,10 +77,21 @@ struct WritingView: View {
                                 }
                         }
                     }
-                    TextEditor(text: $mistakeText)
+                    TextEditor(text: $mistakeText) // MARK: 유저가 실수 작성
+                        .padding()
                         .frame(width: 360, height: 150)
-                        .font(.custom("EF_jejudoldam", size: 15))
-                        .cornerRadius(15)
+                        .background(.white)
+                        .font(.custom("RixXladywaterme lonOTF", size: 15))
+                        .clipShape(.rect(cornerRadius: 15))
+                        .padding(.horizontal, 16)
+                        .scrollContentBackground(.hidden)
+                        .overlay(alignment: .topLeading) { // placeholder 구현
+                            if mistakeText.isEmpty {
+                                Text("오늘의 실수를 입력해주세요.")
+                                    .padding(.top, 22) // 내부 위치 조정
+                                    .padding(.leading, 35)
+                            }
+                        }
             
 
                     HStack {
@@ -94,10 +106,10 @@ struct WritingView: View {
                    
                     
                     HStack(spacing: 20) {
-                        ForEach(WeatherType.allCases) { weather in
+                        ForEach(WeatherType.allCases) { weather in // MARK: 날씨들을 버튼처럼 보여줌. 선택하면 연핑크에서 핑크로 변함
                             Image(weather == selectedWeather ? weather.afterSelect() : weather.beforeSelect())
                                 .resizable()
-                                .scaledToFill() //짜그러짐 이슈
+                                .scaledToFill()
                                 .frame(width: 70, height: 70)
                                 .onTapGesture {
                                     selectedWeather = weather
@@ -117,7 +129,7 @@ struct WritingView: View {
                 }
                     
                     HStack(spacing: 20) {
-                        ForEach(FruitType.allCases) { fruit in
+                        ForEach(FruitType.allCases) { fruit in // MARK: 복숭아들을 버튼처럼 보여줌. 선택하면 연핑크에서 핑크로 변함
                             Image(fruit == selectedFruit ? fruit.afterSelect() : fruit.beforeSelect())
                                 .resizable()
                                 .frame(width: 70, height: 70)
@@ -129,7 +141,7 @@ struct WritingView: View {
                     .padding(.top, 5)
 
                     
-                    NavigationLink(destination: { // 실수 데이터를 넘겨줌
+                    NavigationLink(destination: { // MARK: 저장버튼을 누르면 입력 내용을 Mistake 인스턴스 생성. 앱 데이터에 추가됨. PeachToday 뷰로 이동하여 유저가 작성한 데이터를 넘겨줌
                         let mistake = Mistake(
                             date: Date(),
                             text: mistakeText,
@@ -145,6 +157,7 @@ struct WritingView: View {
                         Image("저장")
                             .resizable()
                             .frame(width: 261, height: 44)
+                            .padding(.top, 10)
                     }
                 }
             }
@@ -152,13 +165,11 @@ struct WritingView: View {
     }
     }
 
-
-
     
   
 #Preview {
     NavigationStack {
         WritingView()
-            .environmentObject(MistakeManager.exampleOnly())
+            .environmentObject(MistakeManager.exampleOnly()) // MARK: 예시데이터를 보여줌
     }
 }

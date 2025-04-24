@@ -36,7 +36,7 @@ struct SplashImage: View {
                 VStack {
                     Text("과실수목원")
                         .padding(.top, 300)
-                        .font(.custom("EF_jejudoldam", size: 60))
+                        .font(.custom("EF_jejudoldam", size: 50))
                     Image("Peaches")
                         .resizable()
                         .frame(width: 700, height: 500)
